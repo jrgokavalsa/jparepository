@@ -6,19 +6,39 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Employee")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Employees {
 	
 	@Id
+	@JsonIgnore
 	private int empid;
+	
+	@NotBlank(message = "First Name cannot be Blank")
 	private String firstName;
+	@NotBlank(message = "Last Name cannot be Blank")
 	private String lastName;
+	@NotBlank(message = "Email cannot be Blank")
+	@Email(message = "Invalid Format")
 	private String email;
+	@NotBlank(message = "Gender cannot be Blank")
 	private String gender;
+	@JsonFormat(pattern = "yyyy/MM/dd")
 	private Date hiredate;
+	@NotBlank(message = "Active cannot be Blank")
 	private boolean active;
+	@Min(value = 3000, message = "Salary should be greater than 3000")
+	@Max(value = 50000,message = "Salary should be less than 50000")
 	private int salary;
 	public int getEmpid() {
 		return empid;

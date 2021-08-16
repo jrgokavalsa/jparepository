@@ -2,6 +2,7 @@ package com.training.jparepository.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -51,6 +52,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Integer>{
 
 	List<Employees> findByHiredateBetween(Date start, Date end);
 	
+	Optional<Employees> findByEmail(String email);
 	
 
 

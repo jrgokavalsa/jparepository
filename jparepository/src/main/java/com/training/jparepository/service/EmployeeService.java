@@ -2,22 +2,26 @@ package com.training.jparepository.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.training.jparepository.exception.ResourceAlreadyExistsException;
+import com.training.jparepository.exception.ResourceNotFoundException;
+import com.training.jparepository.exception.StartEndDateException;
 import com.training.jparepository.model.Employees;
 import com.training.jparepository.repository.EmployeeRepository;
 
 @Service
 public class EmployeeService {
-	
+
 	@Autowired
 	private EmployeeRepository employeeRepository;
 
 	public Employees getEmployee(int id) {
-		System.out.println(id);
-		return employeeRepository.findById(id);
+		return Optional.ofNullable(employeeRepository.findById(id))
+				.orElseThrow(() -> new ResourceNotFoundException("Employee Not Found with Id" + id));
 	}
 
 	public List<Employees> getEmployees() {
@@ -61,7 +65,16 @@ public class EmployeeService {
 	}
 
 	public List<Employees> getEmployeesHiredateBetween(Date start, Date end) {
-		return employeeRepository.findByHiredateBetween(start,end);
+		if(start.after(end)) {
+			throw new StartEndDateException("Invalid Dates");
+		}
+		return employeeRepository.findByHiredateBetween(start, end);
+	}
+
+	public Employees addEmployees(Employees employee) {
+		if(employeeRepository.findByEmail(employee.getEmail()).isPresent())
+			throw new ResourceAlreadyExistsException("Email Already Taken");
+		return employeeRepository.save(employee);
 	}
 
 }

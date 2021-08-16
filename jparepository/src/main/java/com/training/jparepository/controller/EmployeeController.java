@@ -1,11 +1,17 @@
 package com.training.jparepository.controller;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +28,12 @@ public class EmployeeController {
 	@RequestMapping(method = RequestMethod.GET, value = "/employees")
 	public List<Employees> getAllEmployees() {
 		return employeeService.getEmployees();
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/employees/add")
+	public ResponseEntity<String> addEmployees(@Valid @RequestBody Employees employee) {
+		employeeService.addEmployees(employee);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body("Employee Added Successfully");
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/employees/", params = "name")
@@ -62,22 +74,23 @@ public class EmployeeController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/employees/", params = "hiredate")
-	public List<Employees> getAllEmployeesHiredateBefore(@RequestParam String hiredate) throws ParseException {
-		return employeeService.getEmployeesHiredateBefore(new SimpleDateFormat("yyyy-MM-dd").parse(hiredate));
+	public List<Employees> getAllEmployeesHiredateBefore(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date hiredate) throws ParseException {
+		return employeeService.getEmployeesHiredateBefore(hiredate);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/employees/{gender}/{hiredate}")
 	public List<Employees> getAllEmployeesHiredateAfterAndGender(@PathVariable String gender,
-			@PathVariable String hiredate) throws ParseException {
-		return employeeService.getEmployeesHiredateAfterAndGender(new SimpleDateFormat("yyyy-MM-dd").parse(hiredate),
+			@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date hiredate) throws ParseException {
+		return employeeService.getEmployeesHiredateAfterAndGender(hiredate,
 				gender);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/employees/{startdate}/{enddate}")
-	public List<Employees> getAllEmployeesHiredateBetween(@PathVariable String startdate, @PathVariable String enddate)
-			throws ParseException {
-		return employeeService.getEmployeesHiredateBetween(new SimpleDateFormat("yyyy-MM-dd").parse(startdate),
-				new SimpleDateFormat("yyyy-MM-dd").parse(enddate));
+	@RequestMapping(method = RequestMethod.GET, value = "/employees/search/{startdate}/{enddate}")
+	public List<Employees> getAllEmployeesHiredateBetween(
+			@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date startdate,
+			@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date enddate) throws ParseException {
+		return employeeService.getEmployeesHiredateBetween(startdate,
+				enddate);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/employees/{id}")
