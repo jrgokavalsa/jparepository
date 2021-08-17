@@ -52,6 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 	        details.add(ex.getLocalizedMessage());
 	        ErrorResponse error = new ErrorResponse("ALREADY_EXISTS", details);
 	        return new ResponseEntity<Object>(error, HttpStatus.CONFLICT);
+	        
 	    }
 	 
 	 @ExceptionHandler(MethodArgumentTypeMismatchException.class)
