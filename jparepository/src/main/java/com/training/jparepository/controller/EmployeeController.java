@@ -30,7 +30,7 @@ public class EmployeeController {
 		return employeeService.getEmployees();
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/employees/add")
+	@RequestMapping(method = RequestMethod.POST, value = "/employees/create")
 	public ResponseEntity<String> addEmployees(@Valid @RequestBody Employees employee) {
 		employeeService.addEmployees(employee);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body("Employee Added Successfully");
